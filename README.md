@@ -1,46 +1,18 @@
-> Title 
-
-![screenshot]()
-
+> Enumerable Methods Replication 
 
 # Built With
 
+Ruby
+
+# Project Description
+
+[Project 2: Enumerable Methods](https://www.theodinproject.com/courses/ruby-programming/lessons/advanced-building-blocks)
 
 
-
-# Live Demo
-
-[Live Demo Link]()
-
-# Getting Started
-
-
-
-# Prerequisites
-
-- Get your browsers up to date
-
-# Setup
-
-- Clone the repository on your local machine
-- cd into the folder, find the index.html file and open it
-
-# Install
-
-- Install VSCode or any code editor you like
-## Rubocop (Ruby linter) installation
-- Run this command on your terminal in order to install: npm install stylelint stylelint-config-recommended --save-dev
 
 ### Run tests
 
-
-- Go to http://validator.w3.org/ , upload the index.html file to test it.
-
-### Deployment
-
-- Get an online web hosting service
-- Upload all the files in the htdocs folder of your domain
-- Access your domain name in browser
+- Test the methods by passing them arrays or hashes
 
 ## Authors
 
@@ -62,6 +34,5 @@ Contributions, issues and feature requests are welcome!
 Give a ⭐️ if you like this project!
 
 ## Acknowledgments
+[Microverse](https://microverse.org) and [The Odin Project](https://theodinproject.com)
 
-
-## 📝 License
