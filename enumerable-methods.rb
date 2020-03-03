@@ -2,7 +2,7 @@ module My_Enumerables
 
     #my each 
     def my_each
-        return to_enum unless block_given?
+        to_enum if !block_given?
         self.size.times do |n|
             yield self[n]
         end  
@@ -11,7 +11,7 @@ module My_Enumerables
 
     #my_each_with_index
     def my_each_with_index
-        return to_enum unless block_given?
+        to_enum if !block_given?
         n = 0
         while n < (self.length)
             yield(self[n], n)  
@@ -22,7 +22,7 @@ module My_Enumerables
 
     #my_select
     def my_select
-        return to_enum unless block_given?
+        to_enum if !block_given?
         selected = []
         self.my_each do |i|
             selected.push(i) if yield(i)
@@ -32,7 +32,6 @@ module My_Enumerables
 
     #my_all?
     def my_all?
-        return to_enum unless block_given?
         result = true
         self.my_each do |i|
             result = false unless yield(i)
@@ -42,28 +41,21 @@ module My_Enumerables
 
     #my_any?
     def my_any?
-        return to_enum unless block_given?
-        result = false
+        result= false
         self.my_each do |i|
-            if yield(i) 
-                result = true
-                break
-            end
+            break if result
+            (block_given? && yield(i)) || (!block_given? && i) ? result = true : result = false
         end
-        result
+        p result
     end
 
     #my_none?
     def my_none?
-        return to_enum unless block_given?
         result = true
         self.my_each do |i|
-            if yield(i)
-                result = false
-                break
-            end
+            break if result
+            (!block_given? && i) || (block_given? && yield(i)) ? result = false : result = true
         end
-        result
     end
 
     #my_count
@@ -78,10 +70,28 @@ module My_Enumerables
                 counter += 1 
             end
         end
-        p counter
+        counter
+    end
+
+    #my_map
+    def my_map
+        result= []
+        self.my_each do |i|
+            block_given? ? result.push(yield(i)) : to_enum
+        end
+    p result
+    end
+
+    #my_inject
+    def my_inject(accumulator = self[0])
+        self.size.times do |previous, current|
+            yield 
+        end
     end
 end
-    
+
+#Proc for my_map as requested in the project assignment 
+cubed = Proc.new {|i| i**3}
 
 class Array
     include My_Enumerables
@@ -90,7 +100,5 @@ end
 obj = {a: 1, b: 2, c: 3, d: 4}
 
 arr = [3, 56, 8, 4, 5, 5, 5, 1, 2, 5]
-
-# arr.my_each_with_index {|item, index|  "#{item} is located at index #{index}"}
-
-arr.my_count{|i| i.odd?}
+words = ["ant", "bear", "cat"]
+arr.my_inject {|a, b| a+b}
