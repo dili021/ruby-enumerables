@@ -13,8 +13,9 @@ module My_Enumerables
     def my_each_with_index
         to_enum if !block_given?
         n = 0
-        while n < (self.length)
-            yield(self[n], n)  
+        hash_result = []
+        while n < (self.to_a.length)
+            yield(self.to_a[n], n)
             n += 1     
         end
         self
@@ -36,7 +37,6 @@ module My_Enumerables
         self.my_each do |i|
             result = false unless yield(i)
         end        
-        result
     end
 
     #my_any?
@@ -44,9 +44,9 @@ module My_Enumerables
         result= false
         self.my_each do |i|
             break if result
-            (block_given? && yield(i)) || (!block_given? && i) ? result = true : result = false
+            result = (block_given? && yield(i)) || (!block_given? && i) ? true : false
         end
-        p result
+        result
     end
 
     #my_none?
@@ -54,7 +54,7 @@ module My_Enumerables
         result = true
         self.my_each do |i|
             break if result
-            (!block_given? && i) || (block_given? && yield(i)) ? result = false : result = true
+            result = (!block_given? && i) || (block_given? && yield(i)) ? false : true
         end
     end
 
@@ -79,26 +79,22 @@ module My_Enumerables
         self.my_each do |i|
             block_given? ? result.push(yield(i)) : to_enum
         end
-    p result
+        result
     end
+    
+    #Proc for my_map as requested in the project assignment 
+    cubed = Proc.new {|i| i**3}
 
     #my_inject
-    def my_inject(accumulator = self[0])
-        self.size.times do |previous, current|
-            yield 
+    def my_inject(start = nil)
+        acc = start ? start : 0
+        self.my_each do |i|
+            acc = yield(acc, i)
         end
     end
+    
+    #multiply_els method for testing my_inject
+    def multiply_els
+        self.my_inject(1) {|acc, i| acc * i}
+    end
 end
-
-#Proc for my_map as requested in the project assignment 
-cubed = Proc.new {|i| i**3}
-
-class Array
-    include My_Enumerables
-end
-
-obj = {a: 1, b: 2, c: 3, d: 4}
-
-arr = [3, 56, 8, 4, 5, 5, 5, 1, 2, 5]
-words = ["ant", "bear", "cat"]
-arr.my_inject {|a, b| a+b}
