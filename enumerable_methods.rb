@@ -3,7 +3,7 @@ module Enumerable
   def my_each
     to_enum unless block_given?
     size.times do |n|
-      yield self.to_a[n]
+      yield to_a[n]
     end
     self
   end
@@ -13,7 +13,7 @@ module Enumerable
     to_enum unless block_given?
     n = 0
     while n < to_a.length
-      yield(self.to_a[n], n)
+      yield(to_a[n], n)
       n += 1
     end
     self
@@ -22,15 +22,15 @@ module Enumerable
   # my_select
   def my_select
     to_enum unless block_given?
-    selected = self.is_a?(Array || Range) ? [] : {}
-    if self.is_a?(Array)
+    selected = is_a?(Array || Range) ? [] : {}
+    if is_a?(Array)
       my_each do |i|
         selected.push(i) if yield(i)
       end
     else
-        my_each do |key, val|
-          selected[key] = val if yield(key, val)
-        end
+      my_each do |key, val|
+        selected[key] = val if yield(key, val)
+      end
     end
     selected
   end
@@ -39,7 +39,6 @@ module Enumerable
   def my_all?(pattern = nil)
     result = true
     my_each do |i|
-      
       if block_given?
         result = false unless yield(i)
       elsif pattern.is_a?(Regexp)
@@ -53,25 +52,39 @@ module Enumerable
     end
     result
   end
-    
-  
 
   # my_any?
-  def my_any?
-    result = false
+  def my_any?(pattern = nil)
+    result = true
     my_each do |i|
-      break if result
-      result = (block_given? && yield(i)) || (!block_given? && i) ? true : false
+      if block_given?
+        result = false unless yield(i)
+      elsif pattern.is_a?(Regexp)
+        result = false unless i.to_s.match(pattern)
+      elsif pattern.is_a?(Class)
+        result = false unless i.is_a?(pattern)
+      else
+        result = false unless i
+      end
+      break if result != true
     end
     result
   end
 
   # my_none?
-  def my_none?
+  def my_none?(pattern = nil)
     result = true
     my_each do |i|
-      break if result == false
-      result = (!block_given? && i) || (block_given? && yield(i)) ? false : true
+      if block_given?
+        result = false if yield(i)
+      elsif pattern.is_a?(Regexp)
+        result = false if i.to_s.match(pattern)
+      elsif pattern.is_a?(Class)
+        result = false if i.is_a?(pattern)
+      elsif i
+        result = false
+      end
+      break if result
     end
     result
   end
@@ -81,9 +94,10 @@ module Enumerable
     counter = 0
     my_each do |i|
       counter += 1 if block_given? && yield(i)
-      counter += 1 if check.is_a?(Integer) && n == i
-      counter = size if check.nil?
+      counter += 1 if check == i
+      counter = size if check.nil? && !block_given?
     end
+    counter
   end
 
   # my_map
@@ -99,11 +113,13 @@ module Enumerable
   proc { |i| i**3 }
 
   # my_inject
-  def my_inject(start = nil)
-    acc = start || 0
-    my_each do |i|
-      acc = yield(acc, i)
+  def my_inject(sym = nil, start = nil)
+    start.nil? ? acc = first : start
+    (1...to_a.length).my_each do |i|
+      acc = yield(acc, to_a[i]) if block_given?
+      acc = acc.send(sym, to_a[i]) if sym
     end
+    acc
   end
 
   # multiply_els method for testing my_inject
@@ -111,11 +127,3 @@ module Enumerable
     my_inject(1) { |acc, i| acc * i }
   end
 end
-
-obj= {a:1, b:2, c:3}
-
-arr= [1,2,"t", 6,4]
-
-
-
-p arr.my_all?(Integer)
