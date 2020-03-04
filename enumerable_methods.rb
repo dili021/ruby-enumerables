@@ -1,9 +1,9 @@
-module MyEnumerables
+module Enumerable
   # my each
   def my_each
     to_enum unless block_given?
     size.times do |n|
-      yield self[n]
+      yield self.to_a[n]
     end
     self
   end
@@ -13,7 +13,7 @@ module MyEnumerables
     to_enum unless block_given?
     n = 0
     while n < to_a.length
-      yield(to_a[n], n)
+      yield(self.to_a[n], n)
       n += 1
     end
     self
@@ -22,27 +22,45 @@ module MyEnumerables
   # my_select
   def my_select
     to_enum unless block_given?
-    selected = []
-    my_each do |i|
-      selected.push(i) if yield(i)
+    selected = self.is_a?(Array || Range) ? [] : {}
+    if self.is_a?(Array)
+      my_each do |i|
+        selected.push(i) if yield(i)
+      end
+    else
+        my_each do |key, val|
+          selected[key] = val if yield(key, val)
+        end
     end
     selected
   end
 
   # my_all?
-  def my_all?
+  def my_all?(pattern = nil)
     result = true
     my_each do |i|
-      result = false unless yield(i)
+      
+      if block_given?
+        result = false unless yield(i)
+      elsif pattern.is_a?(Regexp)
+        result = false unless i.to_s.match(pattern)
+      elsif pattern.is_a?(Class)
+        result = false unless i.is_a?(pattern)
+      else
+        result = false unless i
+      end
+      break if result != true
     end
+    result
   end
+    
+  
 
   # my_any?
   def my_any?
     result = false
     my_each do |i|
       break if result
-
       result = (block_given? && yield(i)) || (!block_given? && i) ? true : false
     end
     result
@@ -52,10 +70,10 @@ module MyEnumerables
   def my_none?
     result = true
     my_each do |i|
-      break if result
-
+      break if result == false
       result = (!block_given? && i) || (block_given? && yield(i)) ? false : true
     end
+    result
   end
 
   # my_count
@@ -93,3 +111,11 @@ module MyEnumerables
     my_inject(1) { |acc, i| acc * i }
   end
 end
+
+obj= {a:1, b:2, c:3}
+
+arr= [1,2,"t", 6,4]
+
+
+
+p arr.my_all?(Integer)
