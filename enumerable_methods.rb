@@ -10,7 +10,7 @@ module Enumerable
 
   # my_each_with_index
   def my_each_with_index
-    to_enum unless block_given?
+    return to_enum unless block_given?
     n = 0
     while n < to_a.length
       yield(to_a[n], n)
@@ -39,22 +39,24 @@ module Enumerable
   def my_all?(pattern = nil)
     result = true
     my_each do |i|
+      block_given? && pattern.nil? ? result = yield(i) : next 
       case pattern
-      when nil && !block_given?
+      when nil
           result = false if !i
-      when Regexp
+          
+        when Regexp
         result = false unless i.match(pattern)
       when Class
         result = false unless i.is_a?(pattern)
       when String, Numeric
         result = false unless i == pattern
-      when nil
-        result = yield(i)
+      when nil 
+        result = false unless yield(i)
       
       end
       break if result != true
     end
-    p result
+    result
   end
 
   # my_any?
@@ -85,11 +87,11 @@ module Enumerable
       when nil
         result = false if i
       when Regexp
-        result = true unless i.match(pattern)
+        result = false if i.match(pattern)
       when Class
-        result = true unless i.is_a?(pattern)
+        result = false if i.is_a?(pattern)
       when String, Numeric
-        result = true unless i == pattern
+        result = false if i == pattern
       end
     result = !yield(i) if block_given?
       break if !result
@@ -122,7 +124,7 @@ module Enumerable
   proc { |i| i**3 }
 
   # my_inject
-  def my_inject(start = nil, sym = nil)
+  def my_inject(sym = nil, start = nil)
     acc = start ? start : 0 
     (to_a.length.times).my_each do |i|
       acc = yield(acc, to_a[i]) if block_given?
@@ -138,3 +140,6 @@ module Enumerable
   end
 end
 
+
+
+p (5..10).my_inject(:*)
