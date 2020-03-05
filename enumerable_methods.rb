@@ -1,7 +1,7 @@
 module Enumerable
   # my each
   def my_each
-    to_enum unless block_given?
+    return to_enum unless block_given?
     size.times do |n|
       yield to_a[n]
     end
@@ -21,7 +21,7 @@ module Enumerable
 
   # my_select
   def my_select
-    to_enum unless block_given?
+    return to_enum unless block_given?
     selected = is_a?(Array || Range) ? [] : {}
     if is_a?(Array)
       my_each do |i|
@@ -39,34 +39,40 @@ module Enumerable
   def my_all?(pattern = nil)
     result = true
     my_each do |i|
-      if block_given?
-        result = false unless yield(i)
-      elsif pattern.is_a?(Regexp)
-        result = false unless i.to_s.match(pattern)
-      elsif pattern.is_a?(Class)
+      case pattern
+      when nil && !block_given?
+          result = false if !i
+      when Regexp
+        result = false unless i.match(pattern)
+      when Class
         result = false unless i.is_a?(pattern)
-      else
-        result = false unless i
+      when String, Numeric
+        result = false unless i == pattern
+      when nil
+        result = yield(i)
+      
       end
       break if result != true
     end
-    result
+    p result
   end
 
   # my_any?
   def my_any?(pattern = nil)
-    result = true
+    result = false
     my_each do |i|
-      if block_given?
-        result = false unless yield(i)
-      elsif pattern.is_a?(Regexp)
-        result = false unless i.to_s.match(pattern)
-      elsif pattern.is_a?(Class)
-        result = false unless i.is_a?(pattern)
-      else
-        result = false unless i
+      case pattern
+      when nil
+        result = true if i
+      when Regexp
+        result = true if i.match(pattern)
+      when Class
+        result = true if i.is_a?(pattern)
+      when String, Numeric
+        result = true if i == pattern
       end
-      break if result != true
+      result = yield(i) if block_given?
+      break if result
     end
     result
   end
@@ -75,16 +81,18 @@ module Enumerable
   def my_none?(pattern = nil)
     result = true
     my_each do |i|
-      if block_given?
-        result = false if yield(i)
-      elsif pattern.is_a?(Regexp)
-        result = false if i.to_s.match(pattern)
-      elsif pattern.is_a?(Class)
-        result = false if i.is_a?(pattern)
-      elsif i
-        result = false
+      case pattern
+      when nil
+        result = false if i
+      when Regexp
+        result = true unless i.match(pattern)
+      when Class
+        result = true unless i.is_a?(pattern)
+      when String, Numeric
+        result = true unless i == pattern
       end
-      break if result
+    result = !yield(i) if block_given?
+      break if !result
     end
     result
   end
@@ -102,6 +110,7 @@ module Enumerable
 
   # my_map
   def my_map
+    return to_enum unless block_given?
     result = []
     my_each do |i|
       block_given? ? result.push(yield(i)) : to_enum
@@ -113,12 +122,13 @@ module Enumerable
   proc { |i| i**3 }
 
   # my_inject
-  def my_inject(sym = nil, start = nil)
-    start.nil? ? acc = first : start
-    (1...to_a.length).my_each do |i|
+  def my_inject(start = nil, sym = nil)
+    acc = start ? start : 0 
+    (to_a.length.times).my_each do |i|
       acc = yield(acc, to_a[i]) if block_given?
-      acc = acc.send(sym, to_a[i]) if sym
-    end
+      acc =  acc.send(sym, to_a[i]) if sym && start.nil?
+      acc = acc.send(sym, to_a[i]) if sym && start
+      end
     acc
   end
 
@@ -127,3 +137,4 @@ module Enumerable
     my_inject(1) { |acc, i| acc * i }
   end
 end
+
