@@ -141,6 +141,3 @@ end
 
   # Proc for my_map as requested in the project assignment
 cubed = Proc.new { |i| i**3 }
-
-p (5..10).my_inject(1,:*)
-# p %w[ant bear cat]
