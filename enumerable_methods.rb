@@ -1,5 +1,4 @@
 module Enumerable
-  # my each
   def my_each
     return to_enum unless block_given?
     size.times do |n|
@@ -8,7 +7,6 @@ module Enumerable
     self
   end
 
-  # my_each_with_index
   def my_each_with_index
     return to_enum unless block_given?
     n = 0
@@ -19,7 +17,6 @@ module Enumerable
     self
   end
 
-  # my_select
   def my_select
     return to_enum unless block_given?
     selected = is_a?(Array || Range) ? [] : {}
@@ -35,7 +32,6 @@ module Enumerable
     selected
   end
 
-  # my_all?
   def my_all?(pattern = nil)
     result = true
     my_each do |i|
@@ -56,7 +52,6 @@ module Enumerable
     result
   end
 
-  # my_any?
   def my_any?(pattern = nil)
     result = false
     my_each do |i|
@@ -76,7 +71,6 @@ module Enumerable
     result
   end
 
-  # my_none?
   def my_none?(pattern = nil)
     result = true
     my_each do |i|
@@ -96,7 +90,6 @@ module Enumerable
     result
   end
 
-  # my_count
   def my_count(check = nil)
     counter = 0
     my_each do |i|
@@ -107,7 +100,6 @@ module Enumerable
     counter
   end
 
-  # my_map
   def my_map(proc = nil)
     return to_enum unless block_given?
     result = []
@@ -117,7 +109,6 @@ module Enumerable
     result
   end  
 
-  # my_inject
   def my_inject(param1 = nil, param2 = nil)
     start = self.first
     start = param1 if param1.is_a?(Numeric)
@@ -133,11 +124,11 @@ module Enumerable
     acc
   end
 
-  # multiply_els method for testing my_inject
+  
   def multiply_els
     my_inject(1) { |acc, i| acc * i }
   end
 end
 
-  # Proc for my_map as requested in the project assignment
+  
 cubed = Proc.new { |i| i**3 }
