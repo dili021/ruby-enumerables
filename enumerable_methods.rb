@@ -119,17 +119,17 @@ module Enumerable
 
   # my_inject
   def my_inject(param1 = nil, param2 = nil)
-    start = nil
+    start = self.first
     start = param1 if param1.is_a?(Numeric)
     start = param2 if param2.is_a?(Numeric)
-    acc = start.is_a?(Numeric) ? start : 0
+    acc = start if start.is_a?(Numeric) || start.is_a?(String)
     sym = param1 if param1.is_a?(Symbol)
     sym = param2 if param2.is_a?(Symbol)
     (to_a.length.times).my_each do |i|
       acc = yield(acc, to_a[i]) if block_given?
       acc =  acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && param2.nil?) || (param2.is_a?(Symbol) && param1.nil?)
-      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && !param2.nil?) || (param2.is_a?(Symbol) && !param1.nil?)
-      end
+      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && !param2.nil?) || (param2.is_a?(Symbol) && !param1.nil?)   
+    end
     acc
   end
 
@@ -142,3 +142,5 @@ end
   # Proc for my_map as requested in the project assignment
 cubed = Proc.new { |i| i**3 }
 
+p (5..10).my_inject(1,:*)
+# p %w[ant bear cat]
