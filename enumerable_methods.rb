@@ -16,8 +16,7 @@ module Enumerable
     end
     self
   end
-
-  def my_select
+def my_select
     return to_enum unless block_given?
     selected = is_a?(Array || Range) ? [] : {}
     if is_a?(Array)
@@ -37,7 +36,6 @@ module Enumerable
     my_each do |i|
       case pattern
       when nil
-        p result, i
         result = false unless i
       when Regexp
         result = false unless i.to_s.match(pattern)
@@ -100,17 +98,17 @@ module Enumerable
     counter
   end
 
-  def my_map(proc = nil)
+  def my_map(arg = nil)
     return to_enum unless block_given?
     result = []
     my_each do |i|
-      block_given? ? result.push(yield(i)) : to_enum
+       result.push(yield(i)) if block_given?
     end
     result
   end  
 
   def my_inject(param1 = nil, param2 = nil)
-    start = self.first
+    start = 0
     start = param1 if param1.is_a?(Numeric)
     start = param2 if param2.is_a?(Numeric)
     acc = start if start.is_a?(Numeric) || start.is_a?(String)
@@ -123,12 +121,7 @@ module Enumerable
     end
     acc
   end
-
-  
-  def multiply_els
-    my_inject(1) { |acc, i| acc * i }
-  end
 end
 
-  
-cubed = Proc.new { |i| i**3 }
+cubed = Proc.new {|n| n * 3}
+
