@@ -118,12 +118,17 @@ module Enumerable
   end  
 
   # my_inject
-  def my_inject(sym = nil, start = nil)
-    acc = start ? start : 0 
+  def my_inject(param1 = nil, param2 = nil)
+    start = nil
+    start = param1 if param1.is_a?(Numeric)
+    start = param2 if param2.is_a?(Numeric)
+    acc = start.is_a?(Numeric) ? start : 0
+    sym = param1 if param1.is_a?(Symbol)
+    sym = param2 if param2.is_a?(Symbol)
     (to_a.length.times).my_each do |i|
       acc = yield(acc, to_a[i]) if block_given?
-      acc =  acc.send(sym, to_a[i]) if sym && start.nil?
-      acc = acc.send(sym, to_a[i]) if sym && start
+      acc =  acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && param2.nil?) || (param2.is_a?(Symbol) && param1.nil?)
+      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && !param2.nil?) || (param2.is_a?(Symbol) && !param1.nil?)
       end
     acc
   end
@@ -138,4 +143,4 @@ end
 cubed = Proc.new { |i| i**3 }
 
 
-p [3,3,3,3,2,3].my_all?(3)
+p (1..5).my_inject(4){|acc,n| acc*n}
