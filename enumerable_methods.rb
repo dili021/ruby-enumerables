@@ -39,22 +39,19 @@ module Enumerable
   def my_all?(pattern = nil)
     result = true
     my_each do |i|
-      block_given? && pattern.nil? ? result = yield(i) : next 
       case pattern
       when nil
-          result = false if !i
-          
-        when Regexp
-        result = false unless i.match(pattern)
+        p result, i
+        result = false unless i
+      when Regexp
+        result = false unless i.to_s.match(pattern)
       when Class
         result = false unless i.is_a?(pattern)
       when String, Numeric
-        result = false unless i == pattern
-      when nil 
-        result = false unless yield(i)
-      
+        result = false unless i == pattern   
       end
-      break if result != true
+      result = yield(i) if block_given? && pattern.nil?
+      break if !result
     end
     result
   end
@@ -111,17 +108,14 @@ module Enumerable
   end
 
   # my_map
-  def my_map
+  def my_map(proc = nil)
     return to_enum unless block_given?
     result = []
     my_each do |i|
       block_given? ? result.push(yield(i)) : to_enum
     end
     result
-  end
-
-  # Proc for my_map as requested in the project assignment
-  proc { |i| i**3 }
+  end  
 
   # my_inject
   def my_inject(sym = nil, start = nil)
@@ -140,6 +134,8 @@ module Enumerable
   end
 end
 
+  # Proc for my_map as requested in the project assignment
+cubed = Proc.new { |i| i**3 }
 
 
-p (5..10).my_inject(:*)
+p [3,3,3,3,2,3].my_all?(3)
