@@ -142,5 +142,3 @@ end
   # Proc for my_map as requested in the project assignment
 cubed = Proc.new { |i| i**3 }
 
-
-p (1..5).my_inject(4){|acc,n| acc*n}
