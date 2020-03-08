@@ -109,6 +109,7 @@ def my_select
 
   def my_inject(param1 = nil, param2 = nil)
     start = 0
+    start = "" if self[0].is_a?(String)
     start = param1 if param1.is_a?(Numeric)
     start = param2 if param2.is_a?(Numeric)
     acc = start if start.is_a?(Numeric) || start.is_a?(String)
@@ -124,4 +125,3 @@ def my_select
 end
 
 cubed = Proc.new {|n| n * 3}
-
