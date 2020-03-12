@@ -16,6 +16,7 @@ module Enumerable
     end
     self
   end
+
 def my_select
     return to_enum unless block_given?
     selected = is_a?(Array || Range) ? [] : {}
@@ -125,3 +126,4 @@ def my_select
 end
 
 cubed = Proc.new {|n| n * 3}
+
