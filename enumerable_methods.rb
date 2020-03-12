@@ -1,6 +1,7 @@
 module Enumerable
   def my_each
     return to_enum unless block_given?
+
     size.times do |n|
       yield to_a[n]
     end
@@ -9,6 +10,7 @@ module Enumerable
 
   def my_each_with_index
     return to_enum unless block_given?
+
     n = 0
     while n < to_a.length
       yield(to_a[n], n)
@@ -17,8 +19,9 @@ module Enumerable
     self
   end
 
-def my_select
+  def my_select
     return to_enum unless block_given?
+
     selected = is_a?(Array || Range) ? [] : {}
     if is_a?(Array)
       my_each do |i|
@@ -30,7 +33,7 @@ def my_select
       end
     end
     selected
-  end
+    end
 
   def my_all?(pattern = nil)
     result = true
@@ -43,10 +46,10 @@ def my_select
       when Class
         result = false unless i.is_a?(pattern)
       when String, Numeric
-        result = false unless i == pattern   
+        result = false unless i == pattern
       end
       result = yield(i) if block_given? && pattern.nil?
-      break if !result
+      break unless result
     end
     result
   end
@@ -83,8 +86,8 @@ def my_select
       when String, Numeric
         result = false if i == pattern
       end
-    result = !yield(i) if block_given?
-      break if !result
+      result = !yield(i) if block_given?
+      break unless result
     end
     result
   end
@@ -99,31 +102,31 @@ def my_select
     counter
   end
 
-  def my_map(arg = nil)
+  def my_map(_arg = nil)
     return to_enum unless block_given?
+
     result = []
     my_each do |i|
-       result.push(yield(i)) if block_given?
+      result.push(yield(i)) if block_given?
     end
     result
-  end  
+  end
 
   def my_inject(param1 = nil, param2 = nil)
     start = 0
-    start = "" if self[0].is_a?(String)
+    start = '' if self[0].is_a?(String)
     start = param1 if param1.is_a?(Numeric)
     start = param2 if param2.is_a?(Numeric)
     acc = start if start.is_a?(Numeric) || start.is_a?(String)
     sym = param1 if param1.is_a?(Symbol)
     sym = param2 if param2.is_a?(Symbol)
-    (to_a.length.times).my_each do |i|
+    to_a.length.times.my_each do |i|
       acc = yield(acc, to_a[i]) if block_given?
-      acc =  acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && param2.nil?) || (param2.is_a?(Symbol) && param1.nil?)
-      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && !param2.nil?) || (param2.is_a?(Symbol) && !param1.nil?)   
+      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && param2.nil?) || (param2.is_a?(Symbol) && param1.nil?)
+      acc = acc.send(sym, to_a[i]) if (param1.is_a?(Symbol) && !param2.nil?) || (param2.is_a?(Symbol) && !param1.nil?)
     end
     acc
   end
 end
 
-cubed = Proc.new {|n| n * 3}
-
+cubed = proc { |n| n * 3 }
