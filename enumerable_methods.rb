@@ -127,6 +127,12 @@ module Enumerable
     end
     acc
   end
+
+  def my_multiply_els
+    my_inject(1){|acc, elem| acc * elem }
+  end
+
 end
 
 cubed = proc { |n| n * 3 }
+

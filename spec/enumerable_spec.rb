@@ -32,6 +32,10 @@ describe Enumerable do
       demo = array3.my_select { |item| item }
       expect(demo).to eq([1, '1', 'one'])
     end
+    it 'raises en error when used on a non-enumerable object' do
+      error_case = 100
+      expect{error_case.my_select{|item| item < 200}}.to raise_error(NoMethodError)
+    end
   end
 
   describe 'my_all?' do
@@ -58,6 +62,9 @@ describe Enumerable do
     end
     it 'returns true if no item matches a pattern when a pattern is given' do
       expect(array3.my_none?(nil)).to eq(false)
+    end
+    it 'raises an error when more than one argument is given' do
+      expect{array2.my_none?(1,2)}.to raise_error(ArgumentError)
     end
   end
 
@@ -93,4 +100,17 @@ describe Enumerable do
       expect(array1.my_inject(5, :+)).to eq(33)
     end
   end
+
+  describe 'my_multiply_els' do
+    it 'combines all items by multiplying them using the my_inject method' do
+      expect(array1.my_multiply_els).to eq(5040)
+    end
+    it 'raises en error when used on a non-enumerable object' do
+      error_case = 'Hello World'
+      expect{error_case.my_multiply_els}.to raise_error(NoMethodError)
+    end
+  end
+
+  
+
 end
