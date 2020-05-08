@@ -1,10 +1,21 @@
-> Enumerable Methods Replication 
+> Manual implementation of the [enumerable methods](https://ruby-doc.org/core-2.7.1/Enumerable.html)
 
 # Built With
 
 Ruby
 
 # Project Description
+
+## Build own versions of: 
+- each
+- each_with_index
+- select
+- all?
+- any?
+- none?
+- count
+- map
+- inject
 
 [Project 2: Enumerable Methods](https://www.theodinproject.com/courses/ruby-programming/lessons/advanced-building-blocks)
 
@@ -24,10 +35,6 @@ Stefan Dili
 [@twitter](https://twitter.com/dilistefan)
 
 [@linkedin](https://linkedin.com/in/stefan-dili)
-
-## 🤝 Contributing
-
-Contributions, issues and feature requests are welcome!
 
 ## Show your support
 
